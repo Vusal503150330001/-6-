@@ -1,0 +1,67 @@
+import time
+def binary_search_recursive(func, interval, epsilon=1e-5):
+    a, b = interval
+    log_file = "binary_search_log.txt"
+    
+    with open(log_file, "a") as log:
+        log.write(f"{time.time()}: Начинаем рекурсивный бинарный поиск на отрезке [{a}, {b}].\n")
+        
+        fa = func(a)
+        fb = func(b)
+        if fa * fb > 0:
+            log.write(f"{time.time()}: Корней нет на отрезке [{a}, {b}].\n")
+            return None
+        
+        mid = a + (b - a) / 2  # Находим середину отрезка
+        fmid = func(mid)        # Вычисляем значение функции в середине
+        log.write(f"{time.time()}: Проверка: f({mid}) = {fmid}\n")
+        if abs(fmid) < epsilon:
+            log.write(f"{time.time()}: Найден корень: {mid}\n")
+            return mid
+        
+        if fa * fmid < 0:
+            return binary_search_recursive(func, [a, mid], epsilon)
+        else:
+            return binary_search_recursive(func, [mid, b], epsilon)
+def binary_search_iterative(func, interval, epsilon=1e-5):
+    a, b = interval
+    log_file = "binary_search_log.txt"
+    
+    with open(log_file, "a") as log:
+        log.write(f"{time.time()}: Начинаем итеративный бинарный поиск на отрезке [{a}, {b}].\n")
+        
+        fa = func(a)
+        fb = func(b)
+        if fa * fb > 0:
+            log.write(f"{time.time()}: Корней нет на отрезке [{a}, {b}].\n")
+            return None
+        while (b - a) > epsilon:
+            mid = a + (b - a) / 2
+            fmid = func(mid)
+            log.write(f"{time.time()}: Проверка: f({mid}) = {fmid}\n")
+            if abs(fmid) < epsilon:
+                log.write(f"{time.time()}: Найден корень: {mid}\n")
+                return mid
+            
+            if fa * fmid < 0:
+                b = mid
+                fb = fmid
+            else:
+                a = mid
+                fa = fmid
+        mid = a + (b - a) / 2
+        log.write(f"{time.time()}: Найден корень: {mid}\n")
+        return mid
+# Пример функции для поиска корня
+def example_function(x):
+    return x**2 - 4  # Корень: x = 2
+# Запуск рекурсивного бинарного поиска
+start_time_recursive = time.time()
+root_recursive = binary_search_recursive(example_function, [0, 3])
+end_time_recursive = time.time()
+print(f"Рекурсивный метод: корень = {root_recursive}, время = {end_time_recursive - start_time_recursive:.6f} секунд")
+# Запуск итеративного бинарного поиска
+start_time_iterative = time.time()
+root_iterative = binary_search_iterative(example_function, [0, 3])
+end_time_iterative = time.time()
+print(f"Итеративный метод: корень = {root_iterative}, время = {end_time_iterative - start_time_iterative:.6f} секунд")
